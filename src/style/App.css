@@ -1,0 +1,138 @@
+.chrome-picker {
+	float: left;
+	margin: 1rem;
+}
+
+textarea {
+	font-family: inherit;
+	font-size: inherit;
+	word-wrap: break-word;
+}
+.note {
+		/* changet the background color based on colorpicker */
+		background-color: rgba(252,254,125,.3);
+		border: none;
+		width: 100%;
+		min-height: 18rem;
+		background-clip: content-box;
+		padding: 4px;
+		display: flex;
+		flex-direction: column;
+}
+
+#note_new_ca {
+	background-color: rgb(204, 204, 204, 0.3);
+	color: rgb(196, 191, 191);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 100%;
+	min-height: 18rem;
+	padding: 4px;
+	background-clip: content-box;
+	font-size: 50px;
+	border-radius: 1.2rem;
+	height: auto;
+}
+
+#note_new_ca:hover {
+	background-color: rgb(204, 204, 204, 0.5);
+}
+
+.note_group {
+	display: grid;
+	grid-template-columns: repeat(6, minmax(100px, 1fr));
+	justify-items: center;
+	margin-top: 3rem;
+	column-gap: 10px;
+	margin: 5rem 5rem 0 5rem;
+}
+
+.button_group {
+	background-color: rgba(252,254,125);
+	width: 100%;
+	display: flex;
+	justify-content: space-between;
+}
+
+.note svg {
+	pointer-events: none;
+	padding: 0.5rem 1rem;
+	color: rgb(100, 100, 100);
+}
+
+.text {
+	width: 100%;
+	word-wrap: break-word;
+}
+
+.text_body {
+	display: flex;
+	padding: 0 .5rem;
+	flex: 1;
+}
+
+.text_body textarea:focus {
+	background: transparent;
+	outline: none;
+	border: none;
+	overflow: auto;
+	box-shadow: none;
+	-webkit-box-shadow: none;
+	-moz-box-shadow: none;
+	resize: none;
+	min-width: 100%;
+}
+
+.text_body textarea {
+	background: transparent;
+	outline: none;
+	border: none;
+	overflow: auto;
+	box-shadow: none;
+	-webkit-box-shadow: none;
+	-moz-box-shadow: none;
+	resize: none;
+	min-width: 100%;
+}
+
+
+@media only screen and (max-width: 1260px) {
+	.note_group {
+		grid-template-columns: repeat(3, 1fr);
+		margin: 1rem;
+	}
+}
+
+@media only screen and (max-width: 600px) {
+	.chrome-picker {
+		float: none;
+		margin: auto;
+		margin-top: 1rem;
+		width: 92% !important;
+	}
+
+	#note_new_ca {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		width: 100%;
+		height: 15rem;
+		padding: 4px;
+		background-clip: content-box;
+		font-size: 50px;
+		border-radius: 1.2rem;
+	}
+
+	.note_group {
+		grid-template-columns: 1fr;
+		margin: 1rem;
+	}
+
+	.note {
+		max-height: 15rem;
+	
+	}
+}
+
+
