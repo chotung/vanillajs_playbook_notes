@@ -38,8 +38,9 @@ function intialize() {
 	const noteGroup = document.querySelector(".note_group");
 	createNoteHTML(noteGroup);
 	createNewNoteButton(noteGroup);
-	addDeleteBtnEvent();
-	addEditBtnEvent();
+	deleteBtnEvent();
+	editBtnEvent();
+	addBtnEvent();
 }
 // Generate HTML
 
@@ -73,13 +74,14 @@ function resetDom(noteGroup) {
 	noteGroup.innerHTML = "";
 	createNoteHTML(noteGroup);
 	createNewNoteButton(noteGroup);
-	addDeleteBtnEvent();
-	addEditBtnEvent();
+	deleteBtnEvent();
+	editBtnEvent();
+	addBtnEvent();
 }
 
 // DOM EVENTS
 
-function addEditBtnEvent() {
+function editBtnEvent() {
 	const editIcon = document.querySelectorAll(".btn_edit");
 	editIcon.forEach((icon) => {
 		icon.addEventListener("click", editEvent);
@@ -92,12 +94,11 @@ function editEvent(e) {
 	const textBody = e.target.parentElement.nextElementSibling;
 	const textDiv = textBody.querySelector(".text_div");
 	const textArea = textBody.querySelector(".text_area");
+	// When I click off I should also save
 	if (!state.showInput) {
-		console.log(state.showInput);
 		state.showInput = !state.showInput;
 		toggleInputArea(textDiv, textArea);
 	} else {
-		console.log(state.notes);
 		state.showInput = !state.showInput;
 		state.notes.find((note) => {
 			if (note.id === noteId) {
@@ -114,7 +115,7 @@ function toggleInputArea(textDiv, textArea) {
 	textDiv.classList.toggle("hide");
 }
 
-function addDeleteBtnEvent() {
+function deleteBtnEvent() {
 	const deleteIcons = document.querySelectorAll(".btn_delete");
 	deleteIcons.forEach((icon) => {
 		icon.addEventListener("click", deleteEvent);
@@ -127,6 +128,15 @@ function deleteEvent(e) {
 	const filteredNotes = state.notes.filter((note) => note.id !== noteId);
 	state.notes = filteredNotes;
 	resetDom(noteGroup);
+}
+
+function addBtnEvent(e) {
+	const addButton = document.querySelector("#note_new_ca");
+	addButton.addEventListener("click", addEvent);
+}
+
+function addEvent() {
+	console.log("add event");
 }
 
 document.addEventListener("DOMContentLoaded", intialize);
