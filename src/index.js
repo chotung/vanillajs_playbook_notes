@@ -27,7 +27,6 @@ function intialize() {
 	editBtnEvent();
 	addBtnEvent();
 	selectNoteEvent();
-	// console.log(state.notes);
 }
 // Generate HTML
 
@@ -44,7 +43,7 @@ function createNoteHTML(noteGroup) {
 			</article>
 			<div class="text_body">
 				<div class="text text_div">${note.text}</div>
-				<textarea class="text text_area hide" type="text" maxlength="255" rows="10">${note.text}</textarea>
+				<textarea class="text text_area hide" type="text" autofocus maxlength="255"  rows="10">${note.text}</textarea>
 			</div>
 		</div>`;
 	});
@@ -65,7 +64,6 @@ function resetDom(noteGroup) {
 	editBtnEvent();
 	addBtnEvent();
 	selectNoteEvent();
-	// console.log(state.notes);
 }
 
 // DOM EVENTS
@@ -132,7 +130,10 @@ function editEvent(e) {
 	if (!state.showInput) {
 		state.showInput = !state.showInput;
 		toggleInputArea(textDiv, textArea);
+		textArea.focus();
+		textArea.selectionStart = textArea.selectionEnd = textArea.value.length;
 	} else {
+		// finish editing
 		state.showInput = !state.showInput;
 		state.notes.find((note) => {
 			if (note.id === noteId) {
@@ -177,10 +178,5 @@ function addEvent() {
 	if (state.notes.length < 36) state.notes.push(newNote);
 	resetDom(noteGroup);
 }
-
-// find the selected
-// track the selected
-// next click
-// swap the place
 
 document.addEventListener("DOMContentLoaded", intialize);
