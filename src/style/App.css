@@ -21,7 +21,8 @@ textarea {
 }
 
 #note_new_ca {
-	background-color: rgb(204, 204, 204, 0.3);
+	/* background-color: rgb(204, 204, 204, 0.3); */
+	background-color: rgb(204, 204, 204, 0.5);
 	color: rgb(196, 191, 191);
 	display: flex;
 	justify-content: center;
@@ -72,18 +73,6 @@ textarea {
 	flex: 1;
 }
 
-.text_body textarea:focus {
-	background: transparent;
-	outline: none;
-	border: none;
-	overflow: auto;
-	box-shadow: none;
-	-webkit-box-shadow: none;
-	-moz-box-shadow: none;
-	resize: none;
-	min-width: 100%;
-}
-
 .text_body textarea {
 	background: transparent;
 	outline: none;
@@ -96,6 +85,21 @@ textarea {
 	min-width: 100%;
 }
 
+.text_body textarea:focus {
+	background: transparent;
+	outline: none;
+	border: none;
+	overflow: auto;
+	box-shadow: none;
+	-webkit-box-shadow: none;
+	-moz-box-shadow: none;
+	resize: none;
+	min-width: 100%;
+}
+
+.hide {
+	display: none;
+}
 
 @media only screen and (max-width: 1260px) {
 	.note_group {
