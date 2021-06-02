@@ -136,7 +136,10 @@ function addBtnEvent(e) {
 }
 
 function addEvent() {
-	console.log("add event");
+	const noteGroup = document.querySelector(".note_group");
+	const newNote = new Note();
+	state.notes.push(newNote);
+	resetDom(noteGroup);
 }
 
 document.addEventListener("DOMContentLoaded", intialize);
