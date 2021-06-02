@@ -8,6 +8,10 @@ class Note {
 		this.btnColor = btnColor;
 		this.clicked = [];
 	}
+
+	updateText(text) {
+		this.text = text;
+	}
 }
 
 export default Note;

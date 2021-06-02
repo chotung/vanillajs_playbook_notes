@@ -13,7 +13,7 @@ const state = {
 	notes: Array.from(new Array(6), (x) => {
 		return new Note();
 	}),
-	currPost: "",
+	showInput: false,
 };
 
 /**
@@ -92,7 +92,21 @@ function editEvent(e) {
 	const textBody = e.target.parentElement.nextElementSibling;
 	const textDiv = textBody.querySelector(".text_div");
 	const textArea = textBody.querySelector(".text_area");
-	toggleInputArea(textDiv, textArea);
+	if (!state.showInput) {
+		console.log(state.showInput);
+		state.showInput = !state.showInput;
+		toggleInputArea(textDiv, textArea);
+	} else {
+		console.log(state.notes);
+		state.showInput = !state.showInput;
+		state.notes.find((note) => {
+			if (note.id === noteId) {
+				note.updateText(textArea.value);
+			}
+		});
+		toggleInputArea(textDiv, textArea);
+		resetDom(noteGroup);
+	}
 }
 
 function toggleInputArea(textDiv, textArea) {
