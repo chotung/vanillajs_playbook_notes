@@ -1,8 +1,6 @@
-import { library, dom, text } from "@fortawesome/fontawesome-svg-core";
+import { library, dom } from "@fortawesome/fontawesome-svg-core";
 import { faEdit, faTimes, faPlus } from "@fortawesome/free-solid-svg-icons";
 import Note from "./components/Note";
-import qs from "./helper/qs";
-import _, { filter } from "lodash";
 import "./style/index.css";
 import "./style/App.css";
 
@@ -27,7 +25,30 @@ function intialize() {
 	editBtnEvent();
 	addBtnEvent();
 	selectNoteEvent();
+	handleClickingOff(body);
+	// save
 }
+
+function handleClickingOff(body) {
+	body.addEventListener("click", function (e) {
+		const noteGroup = document.querySelector(".note_group");
+		if (state.showInput === true && !e.target.className.includes("button")) {
+			const textArea = document.querySelector(".text.text_area:not(.hide)");
+			const textDiv = document.querySelector(".text.text_div");
+			const noteId = textArea.parentElement.parentElement.dataset.id;
+			state.notes.find((note) => {
+				if (note.id === noteId) {
+					note.updateText(textArea.value);
+				}
+			});
+
+			toggleInputArea(textDiv, textArea);
+			state.showInput = false;
+			resetDom(noteGroup);
+		}
+	});
+}
+
 // Generate HTML
 
 function createNoteHTML(noteGroup) {
@@ -57,6 +78,7 @@ function createNewNoteButton(noteGroup) {
 }
 
 function resetDom(noteGroup) {
+	const body = document.querySelector("body");
 	noteGroup.innerHTML = "";
 	createNoteHTML(noteGroup);
 	createNewNoteButton(noteGroup);
@@ -64,6 +86,15 @@ function resetDom(noteGroup) {
 	editBtnEvent();
 	addBtnEvent();
 	selectNoteEvent();
+	handleClickingOff(body);
+}
+
+// helper function
+function swap(arr, clickedId, storedId) {
+	let temp = arr[clickedId];
+	arr[clickedId] = arr[storedId];
+	arr[storedId] = temp;
+	return arr;
 }
 
 // DOM EVENTS
@@ -105,14 +136,6 @@ function select(e) {
 	}
 }
 
-// helper function
-function swap(arr, clickedId, storedId) {
-	let temp = arr[clickedId];
-	arr[clickedId] = arr[storedId];
-	arr[storedId] = temp;
-	return arr;
-}
-
 function editBtnEvent() {
 	const editIcon = document.querySelectorAll(".btn_edit");
 	editIcon.forEach((icon) => {
@@ -126,23 +149,19 @@ function editEvent(e) {
 	const textBody = e.target.parentElement.nextElementSibling;
 	const textDiv = textBody.querySelector(".text_div");
 	const textArea = textBody.querySelector(".text_area");
-	// When I click off I should also save
 	if (!state.showInput) {
 		state.showInput = !state.showInput;
 		toggleInputArea(textDiv, textArea);
 		textArea.focus();
 		textArea.selectionStart = textArea.selectionEnd = textArea.value.length;
 	} else {
-		// finish editing
-		state.showInput = !state.showInput;
+		if (state.showInput === true) state.showInput = !state.showInput;
 		state.notes.find((note) => {
 			if (note.id === noteId) {
 				note.updateText(textArea.value);
 			}
 		});
 		toggleInputArea(textDiv, textArea);
-		// edit deselects
-		// update the clicked
 		resetDom(noteGroup);
 	}
 }
