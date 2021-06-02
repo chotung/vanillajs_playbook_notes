@@ -6,7 +6,7 @@ class Note {
 		this.text = "some random text";
 		this.color = color;
 		this.btnColor = btnColor;
-		this.clicked = [];
+		this.clicked = false;
 	}
 
 	updateText(text) {
@@ -15,7 +15,3 @@ class Note {
 }
 
 export default Note;
-// id: nextId(),
-// selected: false,
-// color: color,
-// btnColor: " #FCFE7D",

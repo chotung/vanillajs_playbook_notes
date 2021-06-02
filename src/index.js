@@ -14,23 +14,8 @@ const state = {
 		return new Note();
 	}),
 	showInput: false,
+	clicked: new Set(),
 };
-
-/**
- * 			selected: false,
-			color: color,
-			btnColor: " #FCFE7D",
- */
-/**
- * 		backgroundColor: color,
-		border: isSelected ? "3px solid #0198E1" : "none",
-		width: "100%",
-		minHeight: "18rem",
-		backgroundClip: "content-box",
-		padding: "4px",
-		display: "flex",
-		flexDirection: "column",
- */
 
 function intialize() {
 	const body = document.querySelector("body");
@@ -41,6 +26,8 @@ function intialize() {
 	deleteBtnEvent();
 	editBtnEvent();
 	addBtnEvent();
+	selectNoteEvent();
+	// console.log(state.notes);
 }
 // Generate HTML
 
@@ -77,9 +64,56 @@ function resetDom(noteGroup) {
 	deleteBtnEvent();
 	editBtnEvent();
 	addBtnEvent();
+	selectNoteEvent();
+	// console.log(state.notes);
 }
 
 // DOM EVENTS
+function selectNoteEvent() {
+	const selectNotes = document.querySelectorAll(".button_group");
+	selectNotes.forEach((note) => {
+		note.addEventListener("click", select);
+	});
+}
+
+function select(e) {
+	const noteGroup = document.querySelector(".note_group");
+	let { notes, clicked } = state;
+	const clickedNote = e.target;
+	const id = clickedNote.parentElement.dataset.id;
+	if (clickedNote.className === "button_group") {
+		if (clicked.size === 1) {
+			const indexes = [];
+			notes.forEach((note, idx) => {
+				if (note.id === id) {
+					indexes.push(idx);
+				}
+				if (note.id === clicked.values().next().value) {
+					indexes.push(idx);
+				}
+			});
+			swap(notes, indexes[0], indexes[1]);
+			clicked.clear();
+			resetDom(noteGroup);
+		} else if (clicked.size < 2) {
+			if (clicked.has(id)) {
+				clicked.delete(id);
+				clickedNote.parentElement.classList.toggle("selected");
+			} else {
+				clicked.add(id);
+				clickedNote.parentElement.classList.toggle("selected");
+			}
+		}
+	}
+}
+
+// helper function
+function swap(arr, clickedId, storedId) {
+	let temp = arr[clickedId];
+	arr[clickedId] = arr[storedId];
+	arr[storedId] = temp;
+	return arr;
+}
 
 function editBtnEvent() {
 	const editIcon = document.querySelectorAll(".btn_edit");
@@ -106,6 +140,8 @@ function editEvent(e) {
 			}
 		});
 		toggleInputArea(textDiv, textArea);
+		// edit deselects
+		// update the clicked
 		resetDom(noteGroup);
 	}
 }
@@ -138,8 +174,13 @@ function addBtnEvent(e) {
 function addEvent() {
 	const noteGroup = document.querySelector(".note_group");
 	const newNote = new Note();
-	state.notes.push(newNote);
+	if (state.notes.length < 36) state.notes.push(newNote);
 	resetDom(noteGroup);
 }
+
+// find the selected
+// track the selected
+// next click
+// swap the place
 
 document.addEventListener("DOMContentLoaded", intialize);
