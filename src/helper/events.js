@@ -1,42 +1,51 @@
 import swap from "./swap";
+import Note from "../components/Note";
 import toggleInputArea from "./toggleInputArea";
-import { createNoteHTML, createNewNoteButton } from "./generateHTML";
+import { renderNotes, createNewNoteButton } from "./generateHTML";
+import {
+	numberOfHighlighted,
+	limitOfHighlightedNotes,
+	noHighlightedNotes,
+	maxNumOfNotes,
+} from "../constants";
 
 // SELECT
-function selectNoteEvent(state) {
+function highlightAndSelectNote(state) {
 	const selectNotes = document.querySelectorAll(".button_group");
 	selectNotes.forEach((note) => {
-		note.addEventListener("click", select(state));
+		note.addEventListener("click", handleHighlightAndSelect(state));
 	});
 }
 
-function select(state) {
+function handleHighlightAndSelect(state) {
 	return function (e) {
 		const noteGroup = document.querySelector(".note_group");
 		let { notes, clicked } = state;
 		const clickedNote = e.target;
 		const id = clickedNote.parentElement.dataset.id;
-		if (clickedNote.className === "button_group") {
-			if (clicked.size === 1) {
-				const indexes = [];
-				notes.forEach((note, idx) => {
-					if (note.id === id) {
-						indexes.push(idx);
+		if (!state.editMode) {
+			if (clickedNote.className === "button_group") {
+				if (clicked.size === numberOfHighlighted) {
+					const indexes = [];
+					notes.forEach((note, idx) => {
+						if (note.id === id) {
+							indexes.push(idx);
+						}
+						if (note.id === clicked.values().next().value) {
+							indexes.push(idx);
+						}
+					});
+					swap(notes, indexes[0], indexes[1]);
+					clicked.clear();
+					renderDOM(state, noteGroup);
+				} else if (clicked.size < limitOfHighlightedNotes) {
+					if (clicked.has(id)) {
+						clicked.delete(id);
+						clickedNote.parentElement.classList.toggle("selected");
+					} else {
+						clicked.add(id);
+						clickedNote.parentElement.classList.toggle("selected");
 					}
-					if (note.id === clicked.values().next().value) {
-						indexes.push(idx);
-					}
-				});
-				swap(notes, indexes[0], indexes[1]);
-				clicked.clear();
-				resetDom(noteGroup.state);
-			} else if (clicked.size < 2) {
-				if (clicked.has(id)) {
-					clicked.delete(id);
-					clickedNote.parentElement.classList.toggle("selected");
-				} else {
-					clicked.add(id);
-					clickedNote.parentElement.classList.toggle("selected");
 				}
 			}
 		}
@@ -45,7 +54,6 @@ function select(state) {
 
 // EDIT
 function editBtnEvent(state) {
-	console.log(state);
 	const editIcon = document.querySelectorAll(".btn_edit");
 	editIcon.forEach((icon) => {
 		icon.addEventListener("click", editEvent(state));
@@ -54,103 +62,110 @@ function editBtnEvent(state) {
 
 function editEvent(state) {
 	return function (e) {
+		e.preventDefault();
 		const noteGroup = document.querySelector(".note_group");
 		const noteId = e.target.parentElement.parentElement.dataset.id;
 		const textBody = e.target.parentElement.nextElementSibling;
 		const textDiv = textBody.querySelector(".text_div");
 		const textArea = textBody.querySelector(".text_area");
-		if (!state.showInput) {
-			state.showInput = !state.showInput;
-			toggleInputArea(textDiv, textArea);
-			textArea.focus();
-			textArea.selectionStart = textArea.selectionEnd = textArea.value.length;
-		} else {
-			if (state.showInput === true) state.showInput = !state.showInput;
-			state.notes.find((note) => {
-				if (note.id === noteId) {
-					note.updateText(textArea.value);
-				}
-			});
-			toggleInputArea(textDiv, textArea);
-			resetDom(noteGroup, state);
-		}
-	};
-}
-
-// EDIT
-function deleteBtnEvent(state) {
-	const deleteIcons = document.querySelectorAll(".btn_delete");
-	deleteIcons.forEach((icon) => {
-		icon.addEventListener("click", deleteEvent(state));
-	});
-}
-
-function deleteEvent(state) {
-	return function (e) {
-		const noteGroup = document.querySelector(".note_group");
-		const noteId = e.target.parentElement.parentElement.dataset.id;
-		const filteredNotes = state.notes.filter((note) => note.id !== noteId);
-		state.notes = filteredNotes;
-		resetDom(noteGroup, state);
-	};
-}
-
-// ADD BUTTON
-function addBtnEvent(state) {
-	const addButton = document.querySelector("#note_new_ca");
-	addButton.addEventListener("click", addEvent(state));
-}
-
-function addEvent(state) {
-	return function () {
-		const noteGroup = document.querySelector(".note_group");
-		const newNote = new Note();
-		if (state.notes.length < 36) state.notes.push(newNote);
-		resetDom(noteGroup, state);
-	};
-}
-
-// clicking off the note
-function handleClickingOff(body, state) {
-	return function () {
-		body.addEventListener("click", function (e) {
-			console.log("clicking offf");
-			const noteGroup = document.querySelector(".note_group");
-			if (state.showInput === true && !e.target.className.includes("button")) {
-				const textArea = document.querySelector(".text.text_area:not(.hide)");
-				const textDiv = document.querySelector(".text.text_div");
-				const noteId = textArea.parentElement.parentElement.dataset.id;
+		if (state.clicked.size < numberOfHighlighted) {
+			if (state.editMode === false) {
+				state.prevNote = state.notes.find((note) => note.id === noteId);
+				state.editMode = !state.editMode;
+				toggleInputArea(textDiv, textArea);
+				textArea.focus();
+				textArea.selectionStart = textArea.selectionEnd = textArea.value.length;
+			} else if (state.editMode === true && state.prevNote.id === noteId) {
+				state.editMode = !state.editMode;
 				state.notes.find((note) => {
 					if (note.id === noteId) {
 						note.updateText(textArea.value);
 					}
 				});
-
 				toggleInputArea(textDiv, textArea);
-				state.showInput = false;
-				resetDom(noteGroup, state);
+				renderDOM(state, noteGroup);
 			}
-		});
+		}
 	};
 }
 
-// resets
-function resetDom(noteGroup, state) {
-	const body = document.querySelector("body");
+// ADD BUTTON
+function addNoteBtn(state, noteGroup) {
+	const addButton = document.querySelector("#note_new_ca");
+	if (!state.editMode && state.clicked.size === 0) {
+		addButton.addEventListener("click", addEvent(state, noteGroup));
+	}
+}
+
+function addEvent(state, noteGroup) {
+	return function (e) {
+		e.preventDefault();
+		if (!state.editMode && state.clicked.size === noHighlightedNotes) {
+			const newNote = new Note(state.notes.length);
+			if (state.notes.length < maxNumOfNotes) state.notes.push(newNote);
+			renderDOM(state, noteGroup);
+		}
+	};
+}
+
+// DELETE
+function deleteBtnEvent(state, noteGroup) {
+	const deleteIcons = document.querySelectorAll(".btn_delete");
+	if (!state.editMode) {
+		deleteIcons.forEach((icon) => {
+			icon.addEventListener("click", deleteEvent(state, noteGroup));
+		});
+	}
+}
+
+function deleteEvent(state, noteGroup) {
+	return function (e) {
+		e.preventDefault();
+		const noteId = e.target.parentElement.parentElement.dataset.id;
+		const filteredNotes = state.notes.filter((note) => note.id !== noteId);
+		state.notes = filteredNotes;
+		renderDOM(state, noteGroup);
+	};
+}
+// handle blur
+function handleBlurEvent(state, noteGroup) {
+	const txtAr = document.querySelectorAll("textarea");
+	txtAr.forEach((tarea) => {
+		tarea.addEventListener("blur", clickOffNote(state, noteGroup));
+	});
+}
+function clickOffNote(state, noteGroup) {
+	return function (e) {
+		const noteId = e.target.parentElement.parentElement.dataset.id;
+		const textArea = e.target;
+		const textDiv = textArea.previousElementSibling;
+		state.editMode = !state.editMode;
+		state.notes.find((note) => {
+			if (note.id === noteId) {
+				note.updateText(textArea.value);
+			}
+		});
+		toggleInputArea(textDiv, textArea);
+		renderDOM(state, noteGroup);
+	};
+}
+
+// Render | Reset
+function renderDOM(state, noteGroup) {
 	noteGroup.innerHTML = "";
-	createNoteHTML(noteGroup, state);
+	renderNotes(state, noteGroup);
 	createNewNoteButton(noteGroup);
-	deleteBtnEvent();
-	editBtnEvent();
-	addBtnEvent();
-	selectNoteEvent();
-	handleClickingOff(body);
+	editBtnEvent(state);
+	addNoteBtn(state, noteGroup);
+	deleteBtnEvent(state, noteGroup);
+	highlightAndSelectNote(state);
+	handleBlurEvent(state, noteGroup);
 }
 
 export {
-	selectNoteEvent,
+	highlightAndSelectNote,
 	editBtnEvent,
 	deleteBtnEvent,
-	addBtnEvent,
-	handleClickingOff,
+	addNoteBtn,
+	renderDOM,
 };

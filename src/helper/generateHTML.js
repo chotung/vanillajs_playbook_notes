@@ -1,5 +1,4 @@
-function createNoteHTML(noteGroup, state) {
-	console.log(state.notes);
+function renderNotes(state, noteGroup) {
 	return state.notes.forEach((note) => {
 		noteGroup.innerHTML += note.generateHTML();
 	});
@@ -12,4 +11,4 @@ function createNewNoteButton(noteGroup) {
 	newNoteButton.innerHTML += `<i class ="fas fa-plus"></i>`;
 }
 
-export { createNoteHTML, createNewNoteButton };
+export { renderNotes, createNewNoteButton };

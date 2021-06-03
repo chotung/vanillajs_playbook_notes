@@ -1,11 +1,10 @@
 import { v4 as uuidv4 } from "uuid";
 
 class Note {
-	constructor(color, btnColor) {
+	constructor(index) {
 		this.id = uuidv4();
-		this.text = "some random text";
-		this.color = color;
-		this.btnColor = btnColor;
+		this.text = "";
+		this.index = index;
 		this.clicked = false;
 	}
 
