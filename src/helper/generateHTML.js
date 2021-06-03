@@ -1,5 +1,4 @@
 function createNoteHTML(noteGroup, state) {
-	console.log(state.notes);
 	return state.notes.forEach((note) => {
 		noteGroup.innerHTML += note.generateHTML();
 	});

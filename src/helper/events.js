@@ -45,36 +45,34 @@ function select(state) {
 
 // EDIT
 function editBtnEvent(state) {
-	console.log(state);
 	const editIcon = document.querySelectorAll(".btn_edit");
 	editIcon.forEach((icon) => {
-		icon.addEventListener("click", editEvent(state));
+		icon.addEventListener("click", editEvent(e));
 	});
 }
 
-function editEvent(state) {
-	return function (e) {
-		const noteGroup = document.querySelector(".note_group");
-		const noteId = e.target.parentElement.parentElement.dataset.id;
-		const textBody = e.target.parentElement.nextElementSibling;
-		const textDiv = textBody.querySelector(".text_div");
-		const textArea = textBody.querySelector(".text_area");
-		if (!state.showInput) {
-			state.showInput = !state.showInput;
-			toggleInputArea(textDiv, textArea);
-			textArea.focus();
-			textArea.selectionStart = textArea.selectionEnd = textArea.value.length;
-		} else {
-			if (state.showInput === true) state.showInput = !state.showInput;
-			state.notes.find((note) => {
-				if (note.id === noteId) {
-					note.updateText(textArea.value);
-				}
-			});
-			toggleInputArea(textDiv, textArea);
-			resetDom(noteGroup, state);
-		}
-	};
+function editEvent(e) {
+	console.log(state);
+	const noteGroup = document.querySelector(".note_group");
+	const noteId = e.target.parentElement.parentElement.dataset.id;
+	const textBody = e.target.parentElement.nextElementSibling;
+	const textDiv = textBody.querySelector(".text_div");
+	const textArea = textBody.querySelector(".text_area");
+	if (!state.showInput) {
+		state.showInput = !state.showInput;
+		toggleInputArea(textDiv, textArea);
+		textArea.focus();
+		textArea.selectionStart = textArea.selectionEnd = textArea.value.length;
+	} else {
+		if (state.showInput === true) state.showInput = !state.showInput;
+		state.notes.find((note) => {
+			if (note.id === noteId) {
+				note.updateText(textArea.value);
+			}
+		});
+		toggleInputArea(textDiv, textArea);
+		resetDom(noteGroup, state);
+	}
 }
 
 // EDIT
