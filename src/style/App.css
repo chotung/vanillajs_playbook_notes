@@ -8,6 +8,7 @@ textarea {
 	font-family: inherit;
 	font-size: inherit;
 	word-wrap: break-word;
+	margin: 0;
 }
 .note {
 		/* changet the background color based on colorpicker */
