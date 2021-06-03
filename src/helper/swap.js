@@ -1,6 +1,6 @@
-export default function swap(arr, clickedId, storedId) {
-	let temp = arr[clickedId];
-	arr[clickedId] = arr[storedId];
-	arr[storedId] = temp;
+export default function swap(arr, a, b) {
+	let temp = arr[a];
+	arr[a] = arr[b];
+	arr[b] = temp;
 	return arr;
 }
