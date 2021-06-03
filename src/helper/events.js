@@ -70,9 +70,11 @@ function editEvent(state) {
 		const textArea = textBody.querySelector(".text_area");
 		if (state.clicked.size < numberOfHighlighted) {
 			if (state.editMode === false) {
+				const noteDiv = e.target.parentElement.parentElement;
 				state.prevNote = state.notes.find((note) => note.id === noteId);
 				state.editMode = !state.editMode;
 				toggleInputArea(textDiv, textArea);
+				noteDiv.classList.toggle("edit_mode");
 				textArea.focus();
 				textArea.selectionStart = textArea.selectionEnd = textArea.value.length;
 			} else if (state.editMode === true && state.prevNote.id === noteId) {
@@ -82,6 +84,8 @@ function editEvent(state) {
 						note.updateText(textArea.value);
 					}
 				});
+				noteDiv.classList.toggle("edit_mode");
+
 				toggleInputArea(textDiv, textArea);
 				renderDOM(state, noteGroup);
 			}

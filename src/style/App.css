@@ -109,6 +109,12 @@ textarea {
 	border: 3px solid #0198E1;
 }
 
+.edit_mode {
+	box-shadow: 0 0 1px 1px black;
+	padding: 0;
+	border: none;
+}
+
 @media only screen and (max-width: 1260px) {
 	.note_group {
 		grid-template-columns: repeat(3, 1fr);
